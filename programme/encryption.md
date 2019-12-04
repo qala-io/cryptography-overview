@@ -1,6 +1,18 @@
+# Cryptography goals
+
+Things that we want to achieve with cryptography:
+
+* Passing secret data between computers (encryption)
+* Checking data integrity & authenticity (Digital Signatures, Message Authenticity Codes) - the fact that no one
+in the middle changed the message or sent it on behalf of someone else
+* [Non-repudiation](https://en.wikipedia.org/wiki/Non-repudiation) - we won't cover this
+
+These are used in various networking protocols like SSH, HTTPS, VPN, SSMTP. Some of them will be covered in the next
+sections. 
+
 # Symmetric key
 
-Encryption turns useful information into unrecognizable array of bytes. Here is a simple algorithm:
+Encryption turns useful information into unrecognizable array of bytes. Here is a simple algorithm (XOR):
 
 1. Take a string "Hi" which has a binary representation `0100100001101001`
 2. Generate a cypher (key) for encryption (just random bytes): `0001110011111111`
@@ -30,14 +42,13 @@ In real life such simple XOR-algorithm can be easily broken for text data with a
 1. Start generating XOR cyphers starting from 0 and keep incrementing
 2. Run XOR and when you see a lot of english letters - you probably guessed the cypher
 
-So this algorithm of symmetric encryption is not safe, there are much more elaborate algorithms like AES, 
-DES (also can be broken), etc. To the best of my knowledge AES is the choice #1 these days. 
+So this algorithm of symmetric encryption by itself is not safe, there are much more elaborate algorithms like AES, 
+DES (also can be broken), 3DES, etc. To the best of my knowledge AES is the choice #1 these days. 
 
 # Asymmetric key
 
 Symmetric keys have a conceptual problem - how do you share them? A usual case when you need encryption is passing data 
-between 2 computers on the Internet and you don't want someone (like internet provider) to eavesdrop 
-(man-in-the-middle attack):
+between 2 computers on the Internet and you don't want someone (like an internet provider) to eavesdrop:
 
 ```
  _____                                                                         _____  
@@ -49,26 +60,65 @@ between 2 computers on the Internet and you don't want someone (like internet pr
 But how do you transfer that key and at the same time prevent your Internet Provider from seeing it? 
 If man-in-the-middle sees the key he'll be able to use it to decrypt everything.
 
-This is where **asymmetric** keys are used, now there are 2 of them:
+This is where **asymmetric** keys can be used, now there are 2 of them:
 
 * Public Key - can encrypt, but it can't decrypt
 * Private Key - can decrypt
 
-Now the steps are:
+The steps are:
 
 1. Transfer Public Key from B to A
 2. Encrypt message on host A with that Public Key
 3. Send the message to B
 4. Use Private Key to decrypt the message
 
-As you can see Public Key can be freely distributed - it doesn't matter if man-in-the-middle has it because it can't
+As you can see Public Key can be freely distributed - it doesn't matter if an eavesdropper has it because it can't
 be used to decrypt. But Private Key has to be known _only_ by B.
 
 There several algorithms that can be used for asymmetric key encryption:
 
-* RSA is probably the most known and it's still the most widespread. It was the 1st of the kind. It uses Number Theory
-and depends on the fact that numbers can't be easily factored. So you could generate 2 huge prime numbers and multiply
-them, and then even if you spread the information about their product you can't get the original 2 numbers of it.
+* RSA is probably the most known and it's still the most widespread. It was the 1st of the kind. It depends on the 
+fact that numbers can't be easily factored. So you could generate 2 huge prime numbers and multiply
+them, and then even if you spread the information about their product no one can get the original 2 numbers from it.
 Of course you can still calculate the public key from private one (multiply prime numbers again), but not vice versa.
-* DSA
-* ECC (elliptic curve cryptography) 
+* ECC (elliptic curve cryptography)
+
+# Digital Signatures
+
+RSA, DSA, ECDSA
+
+# Forward secrecy, ephemeral keys
+
+Here's a problem with asymmetric keys when used to exchange symmetric keys: 
+
+1. An eavesdropper sees all the traffic including original exchange of the symmetric key and all the
+subsequent data exchange secured by that key. Everything is gibberish of course, but all this communication
+can be stored anyway.
+2. In a year hackers (or government?) finds a way to get their hands your private key
+3. Because they stored all the communication now they can decode your symmetric key and everything that was encrypted by it
+
+What you could do to improve the situation is to use **ephemeral key exchange**:
+
+1. Generate a short-living key pair, distribute public key (sign it with the long-living key)
+2. Encrypt a symmetric key with the short-living public key, decrypt it on the other side
+3. Forget short-living keys and don't log them anywhere
+
+This way even if your private key is exposed later on, it wasn't used for encryption of the symmetric key and thus 
+the latter can't be decrypted.
+
+While this is a working scheme, there are easier and quicker ways of doing original key exchange and in
+practice **asymmetric encryption is not used in two-way communication** anymore.  
+
+# Sharing symmetric key using DH
+
+Diffie–Hellman (DH) key exchange is a way of sharing a secret number over a public network. First, you should recall from 
+school basic rules for powers: `(xᵃ)ᵇ=xᵃᵇ=xᵇᵃ`. So the idea is that `a` & `b` are private while `xᵃ` and `xᵇ` are 
+shared, and after that each of the party finishes the expression by using their own private powers `(xᵃ)ᵇ=xᵃᵇ=xᵇᵃ`:
+
+1. A or B agree on a number `x` that can be known to anyone 
+2. A generates number `a` and sends `a1=xᵃ` to B
+3. B generates number `b` and sends `b1=xᵇ` to A
+4. A calculates `b1ᵃ` and B calculates `a1ᵇ` **which are equal** because `(xᵃ)ᵇ=xᵃᵇ=xᵇᵃ`
+
+So even if there is a man-in-the-middle - he can only see `x`, `a1`, `b1`, but he doesn't know the eventual number.
+In reality modular arithmetic is used along with prime numbers, but you got the gist.
