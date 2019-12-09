@@ -85,6 +85,9 @@ Of course you can still calculate the public key from private one (multiply prim
 
 # Digital Signatures
 
+Asymmetric keys can be used for something other than encryption. Say someone sent you a message and encrypted it. While
+a man-in-the-middle cannot see the original content - he can still change bytes in the message.
+
 RSA, DSA, ECDSA
 
 # Forward secrecy, ephemeral keys
@@ -121,4 +124,45 @@ shared, and after that each of the party finishes the expression by using their 
 4. A calculates `b1ᵃ` and B calculates `a1ᵇ` **which are equal** because `(xᵃ)ᵇ=xᵃᵇ=xᵇᵃ`
 
 So even if there is a man-in-the-middle - he can only see `x`, `a1`, `b1`, but he doesn't know the eventual number.
-In reality modular arithmetic is used along with prime numbers, but you got the gist.
+
+## Powers and logarithms
+
+Given `xᵃ=z` and the fact that `x` and `z` are known how _can_ you find `a`? The brute force approach would be 
+to multiply `x` as many times as needed to reach `z`:
+
+```
+a = 2;
+for(current = x; current != z; current *= x) 
+  a++;
+System.out.println(a);
+```
+
+We agreed before that if `z` is huge it's not feasible to find `a` this way. But... how did we calculate `xᵃ` 
+in the first place? Wouldn't it take the same algorithm to raise `x` to a power? Things are a bit more involved.
+
+It's true that calculating `z=xᵃ` is impractical, but we can do it smarter. E.g. to calculate `x¹²` we could:
+
+```
+x_2  = x * x
+x_4  = x_2 * x_2
+x_8  = x_4 * x_4
+x_12 = x_8 * x_4
+```
+
+It took us 4 multiplications instead of 12! Such algorithm can allow us raise `x` to very large powers. And that's
+all great, but couldn't hackers do a similar trick when searching for `a`? Do something like a binary search - 
+first raise `x` to something huge and if it's larger than `z` try a smaller power and so on.
+
+## Modular Arithmetic & Discrete Logarithms
+
+In order to protect ourselves from the "binary search" we need to introduce our last complication - 
+instead of distributing `z=xᵃ` we'll distribute `z=xᵃ % n`. 
+
+Another name for Modular Arithmetic is Clock Arithmetic. An ordinary hour hand on a clock has 12 values - 0..11.
+After the arrow crossed 11 it overflows back to 0. So in the expression `x % n` our `n` is the max value after
+which we overflow. 
+
+So while `z=xᵃ` can be binary-searched for `a`, with `z=xᵃ % n` you can't really check if your number is greater 
+than `z` because it already overflowed multiple times. This makes it impossible to do binary search and there's 
+no known way of guessing `a` quickly - this is called a 
+[Discrete Logarithm](https://en.wikipedia.org/wiki/Discrete_logarithm) problem. 
