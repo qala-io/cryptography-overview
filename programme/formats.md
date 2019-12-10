@@ -1,6 +1,6 @@
 # ASN.1
 
-This is a generic format with which you can describe any structure by defining a scheme and a message that conforms 
+ASN.1 is a generic format with which you can describe any structure by defining a scheme and a message that conforms 
 to that scheme. The idea is the same as in [Google Protobuf](https://developers.google.com/protocol-buffers) or 
 in XSD+XML. Here's an example of User scheme:
 
@@ -58,13 +58,40 @@ the workflow then looks like this:
 3. Send it to a software written e.g. in C++
 4. Deserialize it into C++ object on the other end
 
+You can play with ASN.1 (compile schema and create DPUs) using [this online tool](https://asn1.io/asn1playground/).
+Unfortunately most of the SDKs and editors to work with ASN.1 are not free.
+
 ## DER format
 
-The most important serialization format that comes with ASN.1 is DER - it's a very(!) compact binary representation 
+The most important serialization format that comes with ASN.1 is DER - it's a very compact binary representation 
 of ASN.1 messages. This format is used by most of the crypto software to encode keys and certificates. E.g. our 
-Jerry Smith message would take [only 27 bytes](./jerry-smith.PDU.der).
+Jerry Smith message would take [only 27 bytes](./jerry-smith.PDU.der) (remember that it's binary).
 
-Even more compact formats exist (BER, PER) but DER is the one used by most of the software.
+Even more compact encodings exist (BER, PER) but DER is the one used by most of the software.
 
 ## PEM format
 
+While DER is very compact it's inconvenient when we need to copy-paste data - for that we need it in a text form.
+The solution is as always - to encode it further into Base64. And if we add header and footer in the right form
+we'll end up with PEM:
+
+```
+-----BEGIN OUR ENCODED DATA----
+MBmABUplcnJ5gQVTbWl0aIIBAKMGgAFBgQFC
+-----END OUR ENCODED DATA----
+```
+
+Oftentimes private keys and certificates are of this form. PEM can include metadata and multiple entries 
+(will be useful for certificate chains):
+
+```
+This is metadata, I can put whatever I want
+-----BEGIN OUR ENCODED DATA----
+MBmABUplcnJ5gQVTbWl0aIIBAKMGgAFBgQFC
+-----END OUR ENCODED DATA----
+
+Next piece of PEM (actually it's the same data)
+-----BEGIN OUR ENCODED DATA----
+MBmABUplcnJ5gQVTbWl0aIIBAKMGgAFBgQFC
+-----END OUR ENCODED DATA----
+```
