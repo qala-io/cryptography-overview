@@ -138,7 +138,7 @@ System.out.println(a);
 ```
 
 We agreed before that if `z` is huge it's not feasible to find `a` this way. But... how did we calculate `xᵃ` 
-in the first place? Wouldn't it take the same algorithm to raise `x` to a power? Things are a bit more involved.
+in the first place? Wouldn't it take the same algorithm to raise `x` to a power?
 
 It's true that calculating `z=xᵃ` is impractical, but we can do it smarter. E.g. to calculate `x¹²` we could:
 
