@@ -30,20 +30,33 @@ Encryption turns useful information into unrecognizable array of bytes. Here is 
 0101010010010110 (encrypted)
 0100100001101001 (decrypted)
 ```
-Notice that decrypted value is the same as original data.
+Notice that decrypted value is the same as original data. This type of encryption is called **symmetric** because 
+the same key (cypher) is used both for encryption and decryption.
 
-Of course the key and the data usually don't match in size, so if the key is size=n, then you take first n bytes of
-the data and run XOR with them. Then take next n bytes and run XOR with the same key and so on.
+## AES, 3DES
 
-This type of encryption is called **symmetric** because the same key (cypher) is used both for encryption and decryption.
+While XOR can be used in some protocols, for encryption it's considered weak and more elaborate algorithms 
+like AES, DES (also can be broken), 3DES, etc are used. To the best of my knowledge AES is the choice #1 these days. 
 
-In real life such simple XOR-algorithm can be easily broken for text data with a brute force:
+## Block ciphers and their modes
 
-1. Start generating XOR cyphers starting from 0 and keep incrementing
-2. Run XOR and when you see a lot of english letters - you probably guessed the cypher
+Let's consider XOR (though the same is applicable to AES and many others). The key and the data usually don't
+match in size, so if the key is size=n, then you split the data into blocks of
+`n` bytes of the data and run XOR with them. Then take next block and run XOR with the same key and so on.
 
-So this algorithm of symmetric encryption by itself is not safe, there are much more elaborate algorithms like AES, 
-DES (also can be broken), 3DES, etc. To the best of my knowledge AES is the choice #1 these days. 
+There are [many modes](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation) in which such cipher can
+be used - the one describe before is called ECB (Electronic Codebook) and is not really secure. When encrypting
+words "mama" and "papa" while the result won't be text it will posses same patterns because letter "a" 
+results in the same byte sequence in both words. By these patterns you can deduce what the text was because the
+frequency with which letters appear in the words are known for typical languages.
+
+The situation can be further improved by changing the key from block to block. E.g. with CBC 
+(Cipher Block Chaining) the encrypted data from previous block is used to build a key for the next block.
+This [diffuses](https://en.wikipedia.org/wiki/Confusion_and_diffusion) the result not allowing to guess 
+original patterns. 
+
+Though you still need a cipher for the 1st block - in such context it's called IV
+([initialization vector](https://en.wikipedia.org/wiki/Initialization_vector)).
 
 # Asymmetric key
 
