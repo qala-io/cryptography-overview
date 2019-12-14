@@ -162,8 +162,10 @@ x_8  = x_4 * x_4
 x_12 = x_8 * x_4
 ```
 
-It took us 4 multiplications instead of 12! Such algorithm can allow us raise `x` to very large powers. And that's
-all great, but couldn't hackers do a similar trick when searching for `a`? Do something like a binary search - 
+It took us 4 multiplications instead of 12! Such algorithm can allow us raise `x` to very large powers. 
+See other [ways of doing exponentiation](https://en.wikipedia.org/wiki/Modular_exponentiation).
+
+That's all great, but couldn't hackers do a similar trick when searching for `a`? Do something like a binary search - 
 first raise `x` to something huge and if it's larger than `z` try a smaller power and so on.
 
 ## Modular Arithmetic & Discrete Logarithms
