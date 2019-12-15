@@ -30,6 +30,6 @@ public class AsnTest {
                 "qJTp/QECgYEA5E43R6gA88DZk3sHv/TklpxF7K7n+zo1C0u32ZAYl42ypbZ3XMcy\n" +
                 "Y4+uuMTg/IACuk/3PGSceE+AOXMMbWc2Ze9TOOHJSPZhgUsfYlAyEOfVi7nuzQ6j\n" +
                 "0gTxOgHGZMCSgi5oo6k3nfkV6L+6k8BIueOb/zjofqLghVuBFmd5OsY=\n" +
-                "-----END RSA PRIVATE KEY-----\n")).toString());
+                "-----END RSA PRIVATE KEY-----\n").toDer()).toString());
     }
 }

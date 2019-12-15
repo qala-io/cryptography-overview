@@ -27,11 +27,15 @@ public class Pem {
         bodyStartIdx = bodyStart;
         bodyEndIdx = bodyEnd;
     }
-    public byte[] toBer() {
-        return Arrays.copyOfRange(content, bodyStartIdx, bodyEndIdx+1);
+    public Der toDer() {
+        return new Der(getBodyBytes());
     }
 
     public String getBody() {
-        return new String(toBer());
+        return new String(getBodyBytes());
     }
+    private byte[] getBodyBytes() {
+        return Arrays.copyOfRange(content, bodyStartIdx, bodyEndIdx+1);
+    }
+
 }

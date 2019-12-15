@@ -8,16 +8,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 public class Asn {
-    private final byte[] ber;
+    private final Der der;
 
-    public Asn(Pem pem) {
-        this(pem.toBer());
-    }
-    public Asn(byte[] ber) {
-        this.ber = ber;
+    public Asn(Der der) {
+        this.der = der;
     }
     public String toString() {
-        ASN1InputStream bIn = new ASN1InputStream(new ByteArrayInputStream(ber));
+        ASN1InputStream bIn = new ASN1InputStream(new ByteArrayInputStream(der.toBytes()));
         try {
             ASN1Primitive obj = bIn.readObject();
             return ASN1Dump.dumpAsString(obj, true);
