@@ -107,3 +107,22 @@ represent - it could be public keys, private keys, certificates, etc.
 
 # X.509 aka PKIX
 
+X.509 is a standard that defines ASN.1 scheme for certificates. Of course such cert could be stored as PEM
+in which case it would have headers:
+
+```
+-----BEGIN CERTIFICATE-----
+``` 
+
+# PKCS
+
+PKCS is a number of specifications that describe standard ASN.1 schemes to store crypto data:
+
+* PKCS#1 - public or private RSA key 
+* PKCS#8 - any generic (including RSA) public or private key
+* PKCS#7 - certificate like X.509
+* PKCS#12 - certificate like X.509 _and its private key_ 
+
+If you see a PEM file with some header and you want to know what format is encoded there, you can find some
+of the common headers and their descriptions in 
+[this article](https://tls.mbed.org/kb/cryptography/asn1-key-structures-in-der-and-pem).  
