@@ -1,9 +1,8 @@
 package io.qala.crypto.format;
 
-import io.qala.crypto.format.Pem;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class PemTest {
     @Test public void parsesOutTheBody() {

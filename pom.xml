@@ -31,6 +31,15 @@
     </dependencies>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <includes>
+                    <include>**/*.pem</include>
+                    <include>**/*.der</include>
+                </includes>
+            </testResource>
+        </testResources>
         <pluginManagement>
             <plugins>
                 <plugin>
