@@ -59,13 +59,19 @@ the workflow then looks like this:
 4. Deserialize it into C++ object on the other end
 
 You can play with ASN.1 (compile schema and create DPUs) using [this online tool](https://asn1.io/asn1playground/).
-Unfortunately most of the SDKs and editors to work with ASN.1 are not free.
+Unfortunately many of the SDKs and editors to work with ASN.1 are not free.
 
 ## DER format
 
 The most important serialization format that comes with ASN.1 is DER - it's a very compact binary representation 
 of ASN.1 messages. This format is used by most of the crypto software to encode keys and certificates. E.g. our 
-Jerry Smith message would take [only 27 bytes](./jerry-smith.PDU.der) (remember that it's binary).
+Jerry Smith message would take [only 27 bytes](./jerry-smith.PDU.der) (remember that it's binary). 
+
+You can use
+[this decoder](http://www.lapo.it/asn1js/#MBmABUplcnJ5gQVTbWl0aIIBAKMGgAFBgQFC) to see the content of the file.
+Note that field names are replaced with indices. And "admin" role turned into `0`. We can't turn this into 
+well-printed human-readable data because the tool doesn't have a complied ASN.1 scheme. Field and "enum" names
+are not present in DER.
 
 Even more compact encodings exist (BER, PER) but DER is the one used by most of the software.
 
@@ -95,3 +101,9 @@ Next piece of PEM (actually it's the same data)
 MBmABUplcnJ5gQVTbWl0aIIBAKMGgAFBgQFC
 -----END OUR ENCODED DATA----
 ```
+
+In practice instead of `BEGIN OUR ENCODED DATA` there's a description of which format the underlying ASN.1 structure
+represent - it could be public keys, private keys, certificates, etc.   
+
+# X.509 aka PKIX
+
