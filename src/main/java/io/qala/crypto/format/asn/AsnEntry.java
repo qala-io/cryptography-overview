@@ -1,5 +1,6 @@
 package io.qala.crypto.format.asn;
 
+import io.qala.crypto.format.asn.der.Sequence;
 import org.bouncycastle.asn1.ASN1Encodable;
 
 public class AsnEntry implements AsnElement {
