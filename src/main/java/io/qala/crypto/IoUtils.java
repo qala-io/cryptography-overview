@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class IoUtils {
@@ -22,9 +23,9 @@ public class IoUtils {
         }
         return buffer.toByteArray();
     }
-    public static byte[] readFromFile(String privateKeyPath) {
+    public static byte[] readFromFile(Path filePath) {
         try {
-            return Files.readAllBytes(Paths.get(privateKeyPath));
+            return Files.readAllBytes(filePath);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

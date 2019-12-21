@@ -5,15 +5,20 @@ import io.qala.crypto.IoUtils;
 import io.qala.crypto.DigitalSignature;
 import io.qala.crypto.format.Der;
 
+import java.nio.file.Path;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 
 public class PrivKey {
     private final PrivateKey key;
-    private final SignatureAlgorithm algorithm;
+    private final KeyAlgorithm algorithm;
 
-    public PrivKey(Der der, SignatureAlgorithm algorithm) {
+    public PrivKey(PrivateKey key, KeyAlgorithm algorithm) {
+        this.key = key;
+        this.algorithm = algorithm;
+    }
+    public PrivKey(Der der, KeyAlgorithm algorithm) {
         this.algorithm = algorithm;
         try {
             PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(der.toBytes());
@@ -23,9 +28,10 @@ public class PrivKey {
             throw new RuntimeException(e);
         }
     }
-    public PrivKey(String privateKeyPath, SignatureAlgorithm algorithm) {
-        this(new Der(IoUtils.readFromFile(privateKeyPath)), algorithm);
+    public PrivKey(Path privateKey, KeyAlgorithm algorithm) {
+        this(new Der(IoUtils.readFromFile(privateKey)), algorithm);
     }
+
 
     public DigitalSignature sign(Message data) {
         Signature dsa;

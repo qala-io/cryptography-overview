@@ -1,5 +1,5 @@
 package io.qala.crypto.key;
 
-public enum SignatureAlgorithm {
+public enum KeyAlgorithm {
     RSA, DSA
 }

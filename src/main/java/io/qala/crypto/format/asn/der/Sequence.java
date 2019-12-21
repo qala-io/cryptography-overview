@@ -1,15 +1,13 @@
 package io.qala.crypto.format.asn.der;
 
 import io.qala.crypto.format.asn.AsnElement;
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.DERSequence;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class Sequence implements AsnElement {
-    private final List<AsnElement> elements;
+    private final Iterable<AsnElement> elements;
 
     public Sequence(AsnElement ... elements) {
         this.elements = Arrays.asList(elements);
