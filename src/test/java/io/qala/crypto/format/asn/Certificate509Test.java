@@ -1,5 +1,6 @@
 package io.qala.crypto.format.asn;
 
+import io.qala.crypto.format.asn.string.PrintableString;
 import org.junit.Test;
 
 import java.io.FileOutputStream;
@@ -12,10 +13,25 @@ public class Certificate509Test {
         Sequence seq = new Sequence(
                 new TaggedObject(true, 0/*version*/, 2/*v3*/),
                 new AsnInt(positiveInteger()),//serial number
-                Oid.SHA256_WITH_RSA_ENCRYPTION.setNull()
+                Oid.SHA256_WITH_RSA_ENCRYPTION.setNull(),
+                /*Name ::= CHOICE { rdnSequence  RDNSequence }
+                RDNSequence ::= SEQUENCE OF RelativeDistinguishedName
+                RelativeDistinguishedName ::=
+                     SET SIZE (1..MAX) OF AttributeTypeAndValue*/
+
+                /*AttributeTypeAndValue ::= SEQUENCE {
+                    type     AttributeType,
+                    value    AttributeValue }*/
+                new Sequence(// issuer name
+                        new DerSet(Oid.COUNTRY.set(new PrintableString("US"))),
+                        new DerSet(Oid.ORGANIZATION.set(new PrintableString("Qala"))),
+                        new DerSet(Oid.ORGANIZATION_UNIT.set(new PrintableString("Security Team"))),
+                        new DerSet(Oid.ISSUER_COMMON_NAME.set(new PrintableString("Qala")))//self signed
+                )
+
         );
         FileOutputStream out = new FileOutputStream("mycustom.crt");
-        out.write(seq.toBouncyCastle().getEncoded());
+        out.write(new Sequence(seq).toBouncyCastle().getEncoded());
         out.flush();
         out.close();
     }

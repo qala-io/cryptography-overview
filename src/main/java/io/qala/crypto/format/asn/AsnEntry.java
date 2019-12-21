@@ -9,7 +9,10 @@ public class AsnEntry implements AsnElement {
         this.sequence = new Sequence(new Oid(oid), AsnElement.NULL);
     }
     public AsnEntry(String oid, int v) {
-        this.sequence = new Sequence(new Oid(oid), new AsnInt(v));
+        this(oid, new AsnInt(v));
+    }
+    public AsnEntry(String oid, AsnElement e) {
+        this.sequence = new Sequence(new Oid(oid), e);
     }
 
     @Override public ASN1Encodable toBouncyCastle() {
