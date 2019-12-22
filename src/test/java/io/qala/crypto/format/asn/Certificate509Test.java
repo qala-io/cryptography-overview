@@ -48,8 +48,8 @@ public class Certificate509Test {
                         new Set(Oid.ORGANIZATION_UNIT.set(new PrintableString("Security Team"))),
                         new Set(Oid.COMMON_NAME.set(new PrintableString("Qala")))),
                 subjectPublicKey,
-                Oid.SUBJECT_KEY_IDENTIFIER.set(new OctetString(pubKeyDigest))
-
+                Oid.SUBJECT_KEY_IDENTIFIER.set(new OctetString(pubKeyDigest)),//Subject Key Identifier
+                Oid.AUTHORITY_KEY_IDENTIFIER.set(new OctetString(new Sequence(new TaggedObject(false, 0, pubKeyDigest))))//Authority Key Identifier
         );
         FileOutputStream out = new FileOutputStream("mycustom.crt");
         out.write(new Sequence(seq).toBouncyCastle().getEncoded());
