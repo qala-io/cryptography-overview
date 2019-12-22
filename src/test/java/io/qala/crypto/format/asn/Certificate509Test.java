@@ -4,6 +4,7 @@ import io.qala.crypto.format.asn.der.OctetString;
 import io.qala.crypto.format.asn.der.Sequence;
 import io.qala.crypto.format.asn.der.Set;
 import io.qala.crypto.format.asn.der.Time;
+import io.qala.crypto.format.asn.string.BitString;
 import io.qala.crypto.format.asn.string.PrintableString;
 import io.qala.crypto.key.KeyAlgorithm;
 import io.qala.crypto.key.Keys;
@@ -48,8 +49,9 @@ public class Certificate509Test {
                         new Set(Oid.ORGANIZATION_UNIT.set(new PrintableString("Security Team"))),
                         new Set(Oid.COMMON_NAME.set(new PrintableString("Qala")))),
                 subjectPublicKey,
-                Oid.SUBJECT_KEY_IDENTIFIER.set(new OctetString(pubKeyDigest)),//Subject Key Identifier
-                Oid.AUTHORITY_KEY_IDENTIFIER.set(new OctetString(new Sequence(new TaggedObject(false, 0, pubKeyDigest))))//Authority Key Identifier
+                Oid.SUBJECT_KEY_IDENTIFIER.set(new OctetString(pubKeyDigest)),
+                Oid.KEY_USAGE.set(new BitString(new KeyUsage().signature().keyCertSign().cRlSign().getMask()))
+
         );
         FileOutputStream out = new FileOutputStream("mycustom.crt");
         out.write(new Sequence(seq).toBouncyCastle().getEncoded());

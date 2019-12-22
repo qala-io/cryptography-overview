@@ -12,6 +12,7 @@ public class Oid implements AsnElement {
             , COMMON_NAME = new Oid("2.5.4.3")
             , SUBJECT_KEY_IDENTIFIER = new Oid("2.5.29.14")
             , AUTHORITY_KEY_IDENTIFIER = new Oid("2.5.29.35")
+            , KEY_USAGE = new Oid("2.5.29.15")
             ;
 
     private final String oid;
