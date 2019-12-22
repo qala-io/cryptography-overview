@@ -13,6 +13,10 @@ public class Oid implements AsnElement {
             , SUBJECT_KEY_IDENTIFIER = new Oid("2.5.29.14")
             , AUTHORITY_KEY_IDENTIFIER = new Oid("2.5.29.35")
             , KEY_USAGE = new Oid("2.5.29.15")
+
+            , EXTENDED_KEY_USAGE = new Oid("2.5.29.37")
+            , SERVER_AUTH_EKU = new Oid("1.3.6.1.5.5.7.3.1")
+            , EMAIL_PROTECTION_EKU = new Oid("1.3.6.1.5.5.7.3.4")
             ;
 
     private final String oid;

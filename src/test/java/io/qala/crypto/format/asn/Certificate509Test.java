@@ -50,8 +50,9 @@ public class Certificate509Test {
                         new Set(Oid.COMMON_NAME.set(new PrintableString("Qala")))),
                 subjectPublicKey,
                 Oid.SUBJECT_KEY_IDENTIFIER.set(new OctetString(pubKeyDigest)),
-                Oid.KEY_USAGE.set(new BitString(new KeyUsage().signature().keyCertSign().cRlSign().getMask()))
-
+                Oid.AUTHORITY_KEY_IDENTIFIER.set(new OctetString(new Sequence(new TaggedObject(false, 0, pubKeyDigest)))),
+                Oid.KEY_USAGE.set(new BitString(new KeyUsage().signature().keyCertSign().cRlSign().getMask())),
+                Oid.EXTENDED_KEY_USAGE.set(new OctetString(new Sequence(Oid.SERVER_AUTH_EKU, Oid.EMAIL_PROTECTION_EKU)))
         );
         FileOutputStream out = new FileOutputStream("mycustom.crt");
         out.write(new Sequence(seq).toBouncyCastle().getEncoded());
