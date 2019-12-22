@@ -10,6 +10,7 @@ public class Oid implements AsnElement {
             , ORGANIZATION = new Oid("2.5.4.10")
             , ORGANIZATION_UNIT = new Oid("2.5.4.11")
             , COMMON_NAME = new Oid("2.5.4.3")
+            , SUBJECT_KEY_IDENTIFIER = new Oid("2.5.29.14")
             ;
 
     private final String oid;

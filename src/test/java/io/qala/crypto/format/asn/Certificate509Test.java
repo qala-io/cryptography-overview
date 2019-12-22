@@ -1,12 +1,15 @@
 package io.qala.crypto.format.asn;
 
+import io.qala.crypto.format.asn.der.OctetString;
 import io.qala.crypto.format.asn.der.Sequence;
-import io.qala.crypto.format.asn.der.SequenceFromBytes;
 import io.qala.crypto.format.asn.der.Set;
 import io.qala.crypto.format.asn.der.Time;
 import io.qala.crypto.format.asn.string.PrintableString;
 import io.qala.crypto.key.KeyAlgorithm;
 import io.qala.crypto.key.Keys;
+import io.qala.crypto.key.PubKey;
+import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.junit.Test;
 
 import java.io.FileOutputStream;
@@ -18,6 +21,15 @@ import static io.qala.datagen.RandomShortApi.positiveInteger;
 
 public class Certificate509Test {
     @Test public void x509() throws IOException {
+        PubKey pubKey = Keys.generate(KeyAlgorithm.RSA, 2048).getPubKey();
+        Sequence subjectPublicKey = new Sequence(pubKey.toX509());
+        byte[] pubKeyBits = subjectPublicKey.getBytesAt(1);
+
+        Digest sha1 = new SHA1Digest();
+        byte[] pubKeyDigest = new byte[sha1.getDigestSize()];
+        sha1.update(pubKeyBits, 0, pubKeyBits.length);
+        sha1.doFinal(pubKeyDigest, 0);
+
         Sequence seq = new Sequence(
                 new TaggedObject(true, 0/*version*/, 2/*v3*/),
                 new AsnInt(positiveInteger()),//serial number
@@ -35,7 +47,8 @@ public class Certificate509Test {
                         new Set(Oid.ORGANIZATION.set(new PrintableString("Qala"))),
                         new Set(Oid.ORGANIZATION_UNIT.set(new PrintableString("Security Team"))),
                         new Set(Oid.COMMON_NAME.set(new PrintableString("Qala")))),
-                new SequenceFromBytes(Keys.generate(KeyAlgorithm.RSA, 2048).getPubKey().toX509())
+                subjectPublicKey,
+                Oid.SUBJECT_KEY_IDENTIFIER.set(new OctetString(pubKeyDigest))
 
         );
         FileOutputStream out = new FileOutputStream("mycustom.crt");

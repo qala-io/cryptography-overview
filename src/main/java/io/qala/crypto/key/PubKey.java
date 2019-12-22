@@ -8,6 +8,7 @@ import io.qala.crypto.format.Der;
 import java.nio.file.Path;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 public class PubKey {
