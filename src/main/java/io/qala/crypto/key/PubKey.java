@@ -1,14 +1,15 @@
 package io.qala.crypto.key;
 
-import io.qala.crypto.Message;
 import io.qala.crypto.DigitalSignature;
 import io.qala.crypto.IoUtils;
+import io.qala.crypto.Message;
 import io.qala.crypto.format.Der;
 
 import java.nio.file.Path;
-import java.security.*;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 public class PubKey {
@@ -34,14 +35,7 @@ public class PubKey {
     }
 
     public boolean verifySignature(Message data, DigitalSignature signature) {
-        try {
-            Signature s = Signature.getInstance("SHA256with" + algorithm.name() /*e.g. SHA1withDSA*/);
-            s.initVerify(key);
-            s.update(data.toBytes());
-            return s.verify(signature.toBytes());
-        } catch (NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
-            throw new RuntimeException(e);
-        }
+        return algorithm.signatureAlgorithm.verify(key, data, signature);
     }
     public byte[] toX509() {//SubjectPublicKeyInfo
         return key.getEncoded();

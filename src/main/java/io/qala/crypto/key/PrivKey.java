@@ -1,12 +1,14 @@
 package io.qala.crypto.key;
 
-import io.qala.crypto.Message;
-import io.qala.crypto.IoUtils;
 import io.qala.crypto.DigitalSignature;
+import io.qala.crypto.IoUtils;
+import io.qala.crypto.Message;
 import io.qala.crypto.format.Der;
 
 import java.nio.file.Path;
-import java.security.*;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 
@@ -32,16 +34,7 @@ public class PrivKey {
         this(new Der(IoUtils.readFromFile(privateKey)), algorithm);
     }
 
-
     public DigitalSignature sign(Message data) {
-        Signature dsa;
-        try {
-            dsa = Signature.getInstance("SHA256with" + algorithm.name() /*e.g. SHA1withDSA*/);
-            dsa.initSign(key);
-            dsa.update(data.toBytes());
-            return new DigitalSignature(dsa.sign());
-        } catch (NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
-            throw new RuntimeException(e);
-        }
+        return algorithm.signatureAlgorithm.sign(key, data);
     }
 }
