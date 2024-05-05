@@ -128,20 +128,20 @@ practice **asymmetric encryption is not used in two-way communication** anymore.
 # Sharing symmetric key using DH
 
 Diffie–Hellman (DH) key exchange is a way of sharing a secret number over a public network. First, you should recall from 
-school basic rules for powers: `(xᵃ)ᵇ=xᵃᵇ=xᵇᵃ`. So the idea is that `a` & `b` are private while `xᵃ` and `xᵇ` are 
-shared, and after that each of the party finishes the expression by using their own private powers `(xᵃ)ᵇ=xᵃᵇ=xᵇᵃ`:
+school basic rules for powers: $(x^a)^b=x^{ab}=x^{ba}$. So the idea is that $a$ & $b$ are private while $x^a$ and $x^b$ are 
+shared, and after that each of the party finishes the expression by using their own private powers  $(x^a)^b=x^{ab}=x^{ba}$:
 
-1. A or B agree on a number `x` that can be known to anyone 
-2. A generates number `a` and sends `a1=xᵃ` to B
-3. B generates number `b` and sends `b1=xᵇ` to A
-4. A calculates `b1ᵃ` and B calculates `a1ᵇ` **which are equal** because `(xᵃ)ᵇ=xᵃᵇ=xᵇᵃ`
+1. A or B agree on a number $x$ that can be known to anyone 
+2. A generates number $a$ and sends $a_1=x^a$ to B
+3. B generates number $b$ and sends $b_1=x^b$ to A
+4. A calculates $b_1^a$ and B calculates $a_1^b$ **which are equal** because $x^{ab}=x^{ba}$
 
-So even if there is a man-in-the-middle - he can only see `x`, `a1`, `b1`, but he doesn't know the eventual number.
+So even if there is a man-in-the-middle - they can only see $x$, $a_1$, $b_1$, but he doesn't know the eventual number.
 
 ## Powers and logarithms
 
-Given `xᵃ=z` and the fact that `x` and `z` are known how _can_ you find `a`? The brute force approach would be 
-to multiply `x` as many times as needed to reach `z`:
+Given $x^a=z$ and the fact that $x$ and $z$ are known how _can_ you find $a$? The brute force approach would be 
+to multiply $x$ as many times as needed to reach $z$:
 
 ```
 a = 2;
@@ -150,34 +150,36 @@ for(current = x; current != z; current *= x)
 System.out.println(a);
 ```
 
-We agreed before that if `z` is huge it's not feasible to find `a` this way. But... how did we calculate `xᵃ` 
-in the first place? Wouldn't it take the same algorithm to raise `x` to a power?
+We agreed before that if $z$ is huge it's not feasible to find $a$ this way. But... how did we calculate $x^a$ 
+in the first place? Wouldn't it take the same algorithm to raise $x$ to a power?
 
-It's true that calculating `z=xᵃ` is impractical, but we can do it smarter. E.g. to calculate `x¹²` we could:
+It's true that calculating $z=x^a$ is impractical, but we can do it smarter. E.g. to calculate $x^{12}$ we could:
 
-```
-x_2  = x * x
-x_4  = x_2 * x_2
-x_8  = x_4 * x_4
-x_12 = x_8 * x_4
-```
+$$
+\displaylines{x^2  = x \times x \\
+x^4  = x^2 \times x^2 \\
+x^8  = x^4 \times x^4 \\
+x^{12} = x^8 \times x^4
+}
+$$
 
-It took us 4 multiplications instead of 12! Such algorithm can allow us raise `x` to very large powers. 
+It took us 4 multiplications instead of 12! Such algorithm can allow us raise $x$ to very large powers. 
 See other [ways of doing exponentiation](https://en.wikipedia.org/wiki/Modular_exponentiation).
 
-That's all great, but couldn't hackers do a similar trick when searching for `a`? Do something like a binary search - 
-first raise `x` to something huge and if it's larger than `z` try a smaller power and so on.
+That's all great, but couldn't hackers do a similar trick when searching for $a$? Do something like a binary search - 
+first raise $x$ to something huge and if it's larger than $z$ try a smaller power and so on.
 
 ## Modular Arithmetic & Discrete Logarithms
 
 In order to protect ourselves from the "binary search" we need to introduce our last complication - 
-instead of distributing `z=xᵃ` we'll distribute `z=xᵃ % n`. 
+instead of distributing $z=x^a$ we'll distribute $z=x^a \mod n$ (which in many programming languages looks like
+`z=x % a` for positive integers).
 
 Another name for Modular Arithmetic is Clock Arithmetic. An ordinary hour hand on a clock has 12 values - 0..11.
-After the arrow crossed 11 it overflows back to 0. So in the expression `x % n` our `n` is the max value after
+After the arrow crossed 11 it overflows back to 0. So in the expression $x \mod n$ our $n$ is the max value after
 which we overflow. 
 
-So while `z=xᵃ` can be binary-searched for `a`, with `z=xᵃ % n` you can't really check if your number is greater 
-than `z` because it already overflowed multiple times. This makes it impossible to do binary search and there's 
-no known way of guessing `a` quickly - this is called a 
+So while $z=x^a$ can be binary-searched for $a$, with $z=x^a \mod n$ you can't really check if your number is greater 
+than $z$ because it already overflowed multiple times. This makes it impossible to do binary search and there's 
+no known way of guessing $a$ quickly - this is called a 
 [Discrete Logarithm](https://en.wikipedia.org/wiki/Discrete_logarithm) problem. 
